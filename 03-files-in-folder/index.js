@@ -13,16 +13,22 @@ const READ_DIR_PATH = path.join(__dirname, DIR_PATH);
   } catch (error) {
     console.log(error);
   }
-  files.forEach(file => {
+
+  const print = (filePath, error, stats) => {
+    if (error) {
+      console.log(error);
+    } else {
+      let { name, ext } = path.parse(filePath);
+      ext = ext.slice(ext.indexOf('.') + 1);
+      console.log(`${name} - ${ext} - ${stats.size} bytes`);
+    }
+  };
+
+  const iterate = (file) => {
     const filePath = path.join(READ_DIR_PATH, file.name);
-    fs.lstat(filePath, (error, stats) => {
-      if (error) {
-        console.log(error);
-      } else {
-        let { name, ext } = path.parse(filePath);
-        ext = ext.slice(ext.indexOf('.') + 1);
-        console.log(`${name} - ${ext} - ${stats.size} bytes`);
-      }
-    });
-  });
+    const cb = print.bind(null, filePath);
+    fs.lstat(filePath, cb);
+  };
+
+  files.forEach(iterate);
 })();

@@ -6,23 +6,25 @@ const READ_DIR_NAME = 'styles';
 const WRITE_DIR_NAME = 'project-dist';
 const WRITE_FILE_NAME = 'bundle.css';
 const READ_DIR_PATH = path.join(__dirname, READ_DIR_NAME);
-const WRITE_DIR_PATH = path.join(__dirname, WRITE_DIR_NAME);
+const WRITE_PATH = path.join(__dirname, WRITE_DIR_NAME, WRITE_FILE_NAME);
 const FILTER_EXTENSION = '.css';
 
-async function* generateContent() {
-  const files = await selectFilesByExt(READ_DIR_PATH, FILTER_EXTENSION);
+async function* generateContent(readDirPath, files) {
   for (let i = 0; i < files.length; i++) {
-    let content = await readFile(path.join(READ_DIR_PATH, files[i]), 'utf-8');
+    let content = await readFile(path.join(readDirPath, files[i]), 'utf-8');
     yield content;
   }
 }
 
-const makeBundle = async () => {
+const makeBundle = async (readPath, writePath, fileExt) => {
   let content = '';
-  for await (const value of generateContent()) {
+  const files = await selectFilesByExt(readPath, fileExt);
+  for await (const value of generateContent(readPath, files)) {
     content += value + '\n';
   }
-  writeFile(path.join(WRITE_DIR_PATH, WRITE_FILE_NAME), content, 'utf-8');
+  writeFile(writePath, content, 'utf-8');
 };
 
-makeBundle();
+makeBundle(READ_DIR_PATH, WRITE_PATH, FILTER_EXTENSION);
+
+module.exports.makeBundle = makeBundle;

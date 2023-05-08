@@ -7,7 +7,7 @@ const path = require('node:path');
 const FAREWELl_PHRASE = 'Goodbye good luck.';
 const WRITE_PATH = path.join(__dirname, 'log.txt');
 
-const output = fs.createWriteStream(WRITE_PATH);
+const output = fs.createWriteStream(WRITE_PATH, 'utf-8');
 const rl = readline.createInterface({ input, output });
 
 stdout.write('Enter text:\n');
